@@ -21,7 +21,7 @@ def desenhar_menu(tela, fonte_g, fonte_m, nome, ativo_input, mouse_pos):
 
     cursor = '_' if (pygame.time.get_ticks() // 500) % 2 == 0 and ativo_input else ''
     txt = fonte_m.render(nome + cursor, True, COR_TEXTO)
-    tela.blit(text, (box.x +10, box.y +12))
+    tela.blit(txt, (box.x +10, box.y +12))
     label = fonte_m.render('Digite seu nome:', True, COR_TEXTO)
     tela.blit(label, (box.x, box.y - 30))
 
