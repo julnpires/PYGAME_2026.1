@@ -13,7 +13,7 @@ COR_BOTAO_HOVER = (60,120,70)
 def desenhar_menu(tela, fonte_g, fonte_m, nome, ativo_input, mouse_pos):
     tela.fill(COR_FUNDO)
     titulo = fonte_g.render("Buraco 6", True, COR_TEXTO)
-    tela.blit(titulo, (LARGURA // 2 - titulo.getwidth() // 2, 80))
+    tela.blit(titulo, (LARGURA // 2 - titulo.get_width() // 2, 80))
 
     box = pygame.Rect(LARGURA // 2 - 200, 220, 400, 50)
     pygame.draw.rect(tela, COR_CAIXA, box, border_radius=8)
@@ -78,7 +78,7 @@ def main():
                         print('Abrir tela de regras')
                         estado = 'REGRAS'
                     
-                if ev.typer == pygame.KEYDOWN and input_ativo:
+                if ev.type == pygame.KEYDOWN and input_ativo:
                     if ev.key == pygame.K_BACKSPACE:
                         nome = nome[:-1]
                     elif ev.key == pygame.K_RETURN:
