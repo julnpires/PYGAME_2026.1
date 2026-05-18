@@ -34,14 +34,14 @@ COEF_RESTITUICAO = 0.82
 VEL_MAX_AFUNDA = 9.0
 
 class Parede:
-    def _init_(self, x, y, w, h):
+    def __init__(self, x, y, w, h):
         self.rect = pygame.Rect(x, y, w, h)
 
-def desenhar(self, tela):
-    sombra = self.rect.move(3, 4)
-    pygame.draw.rect(tela, COR_BOLA_SOMBRA, sombra, border_radius=4)
-    pygame.draw.rect(tela, COR_PAREDE, self.rect, border_radius=4)
-    pygame.draw.rect(tela, COR_PAREDE_DARK, self.rect, 2, border_radius=4)
+    def desenhar(self, tela):
+        sombra = self.rect.move(3, 4)
+        pygame.draw.rect(tela, COR_BOLA_SOMBRA, sombra, border_radius=4)
+        pygame.draw.rect(tela, COR_PAREDE, self.rect, border_radius=4)
+        pygame.draw.rect(tela, COR_PAREDE_DARK, self.rect, 2, border_radius=4)
 
 class Zona:
     """Areia ou água. Neste commit usamos só areia."""
@@ -67,7 +67,7 @@ class Zona:
         return self.rect.collidepoint(x, y)
     
 class Jogador:
-    def _init_(self, nome, cor):
+    def __init__(self, nome, cor):
         self.nome = nome
         self.cor = cor
         self.x = 0.0
@@ -410,4 +410,11 @@ def main():
             txt = fonte_m.render("Tela de regras (placeholder)", True, COR_TEXTO)
             tela.blit(txt, (300, 300))
 
+        pygame.display.flip()
 
+    pygame.quit()
+    sys.exit()
+
+
+if __name__ == "__main__":
+    main()

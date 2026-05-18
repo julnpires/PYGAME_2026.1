@@ -7,7 +7,6 @@ from config import (
     COR_BOLA, POTENCIA_MAX_DRAG, POTENCIA_FATOR,
 )
 from paredes import Parede, Jogador, desenhar_campo, desenhar_mira, atualizar_bola
-from buracos_fase import  desenhar , desenhar_menu , desenhar_campo , desenhar_mira , colidir_rect , checar_buraco , atualizar_bola , desenhar_hud , desenhar_fim_hole , main 
 
 def desenhar_menu(tela, fonte_g, fonte_m, nome, ativo_input, mouse_pos):
     tela.fill(COR_FUNDO)
