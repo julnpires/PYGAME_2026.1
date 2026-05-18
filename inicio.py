@@ -121,7 +121,7 @@ def main():
 
         if estado == "JOGANDO" and jogador:
             if not jogador.parou():
-                atualizar_bola(jogador, paredes, hole)
+                atualizar_bola(jogador, paredes)
 
         if estado == "MENU":
             botao_iniciar, botao_regras = None, None
