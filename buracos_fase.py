@@ -1,7 +1,7 @@
 import pygame
 import sys
 import math
-
+import random
 
 LARGURA, ALTURA = 1000, 700
 FPS = 60
@@ -19,11 +19,14 @@ COR_HOLE = (15, 15, 15)
 COR_TEE = (240, 240, 240)
 COR_PAREDE = (95, 60, 35)
 COR_PAREDE_DARK = (55, 33, 18)
+COR_AREIA = (220, 200, 130)
+COR_AREIA_DARK = (195, 175, 105)
 
 RAIO_BOLA = 8
 RAIO_BURACO = 14
 
 ATRITO = 0.985
+ATRITO_AREIA = 0.91
 VEL_MIN = 0.18
 POTENCIA_MAX_DRAG = 200
 POTENCIA_FATOR = 0.13
@@ -40,6 +43,29 @@ def desenhar(self, tela):
     pygame.draw.rect(tela, COR_PAREDE, self.rect, border_radius=4)
     pygame.draw.rect(tela, COR_PAREDE_DARK, self.rect, 2, border_radius=4)
 
+class Zona:
+    """Areia ou água. Neste commit usamos só areia."""
+    def __init__(self, x, y, w, h, tipo):
+        self.rect = pygame.Rect(x, y, w, h)
+        self.tipo = tipo
+
+    def desenhar(self, tela):
+        if self.tipo == "areia":
+            pygame.draw.rect(tela, COR_AREIA, self.rect, border_radius=10)
+            random.seed(self.rect.x * 7 + self.rect.y)
+            for _ in range(self.rect.w * self.rect.h // 200):
+                px = random.randint(self.rect.left + 4, self.rect.right - 4)
+                py = random.randint(self.rect.top + 4, self.rect.bottom - 4)
+                pygame.draw.circle(
+                    tela,
+                    COR_AREIA_DARK,
+                    (px, py),
+                    1
+                )
+
+    def contem(self, x, y):
+        return self.rect.collidepoint(x, y)
+    
 class Jogador:
     def _init_(self, nome, cor):
         self.nome = nome
@@ -111,13 +137,11 @@ def desenhar_menu(tela, fonte_g, fonte_m, nome, ativo_input, mouse_pos):
     return box, botao_iniciar, botao_regras
 
 
-def desenhar_campo(tela, tee, buraco_pos, paredes):
+def desenhar_campo(tela, tee, buraco_pos, paredes, zonas):
     tela.fill(COR_FUNDO)
-
     for y in range(0, ALTURA, 30):
         if (y // 30) % 2 == 0:
             pygame.draw.rect(tela, COR_GRAMA_CLARA, (0, y, LARGURA, 15))
-
     pygame.draw.circle(tela, COR_TEE, tee, 14, 1)
 
     bx, by = buraco_pos
@@ -126,10 +150,10 @@ def desenhar_campo(tela, tee, buraco_pos, paredes):
     pygame.draw.line(tela, (60, 40, 30), (bx, by - 3), (bx, by - 38), 2)
     pygame.draw.polygon(tela, (220, 50, 50),
                         [(bx, by - 38), (bx + 16, by - 33), (bx, by - 26)])
-
+    for z in zonas:
+        z.desenhar(tela)
     for p in paredes:
         p.desenhar(tela)
-
 
 def desenhar_mira(tela, jogador, mouse_pos):
     mx, my = mouse_pos
@@ -168,14 +192,12 @@ def desenhar_mira(tela, jogador, mouse_pos):
     pygame.draw.rect(tela, (40, 40, 40), (bar_x, bar_y, bar_w, 8), border_radius=4)
     pygame.draw.rect(tela, cor, (bar_x, bar_y, int(bar_w * pct), 8), border_radius=4)
 
-
 def colidir_rect(j, rect):
     cx = max(rect.left, min(j.x, rect.right))
     cy = max(rect.top, min(j.y, rect.bottom))
     dx = j.x - cx
     dy = j.y - cy
     dist_sq = dx * dx + dy * dy
-
     if dist_sq < RAIO_BOLA * RAIO_BOLA:
         if dist_sq < 0.0001:
             esq = j.x - rect.left
@@ -183,7 +205,6 @@ def colidir_rect(j, rect):
             cima = j.y - rect.top
             baixo = rect.bottom - j.y
             menor = min(esq, dir_, cima, baixo)
-
             if menor == esq:
                 j.x = rect.left - RAIO_BOLA - 0.5
                 j.vx = -abs(j.vx) * COEF_RESTITUICAO
@@ -211,7 +232,6 @@ def colidir_rect(j, rect):
             j.vx *= COEF_RESTITUICAO
             j.vy *= COEF_RESTITUICAO
         return True
-
     return False
 
 def checar_buraco(j, buraco_pos):
@@ -226,11 +246,14 @@ def checar_buraco(j, buraco_pos):
         return True
     return False
 
-
-def atualizar_bola(j, paredes, buraco_pos):
-    j.x += j.vx
-    j.y += j.vy
-
+def atualizar_bola(j, paredes, buraco_pos, zonas):
+    em_areia = any(
+    z.tipo == "areia" and z.contem(j.x, j.y)
+    for z in zonas
+    )
+    atrito = ATRITO_AREIA if em_areia else ATRITO
+    j.vx *= atrito
+    j.vy *= atrito
     for p in paredes:
         colidir_rect(j, p.rect)
 
@@ -276,20 +299,19 @@ def main():
     tela = pygame.display.set_mode((LARGURA, ALTURA))
     pygame.display.set_caption("Mini Golf Multiplayer")
     clock = pygame.time.Clock()
-
     fonte_g = pygame.font.SysFont("Arial", 48, bold=True)
     fonte_m = pygame.font.SysFont("Arial", 24)
-
     estado = "MENU"
     nome = ""
     input_ativo = True
-
     tee = (130, 350)
     buraco_pos = (870, 350)
     paredes = [
         Parede(480, 200, 30, 300),
     ]
-
+    zonas = [
+        Zona(380, 500, 220, 110, "areia"),
+    ]
     jogador = None
     aiming = False
     botao_iniciar = None
@@ -299,11 +321,9 @@ def main():
     while rodando:
         mouse_pos = pygame.mouse.get_pos()
         dt = clock.tick(FPS) / 1000.0
-
         for ev in pygame.event.get():
             if ev.type == pygame.QUIT:
                 rodando = False
-
             if estado == "MENU":
                 if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
                     if botao_iniciar and botao_iniciar.collidepoint(ev.pos) and nome.strip():
@@ -362,7 +382,7 @@ def main():
 
         if estado == "JOGANDO" and jogador:
             if not jogador.parou() and not jogador.no_buraco:
-                atualizar_bola(jogador, paredes, buraco_pos)
+                atualizar_bola(jogador, paredes, buraco_pos, zonas)
                 if jogador.no_buraco:
                     estado = "FIM_HOLE"
 
