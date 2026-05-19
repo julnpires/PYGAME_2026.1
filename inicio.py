@@ -6,7 +6,8 @@ from config import (
     COR_FUNDO, COR_TEXTO, COR_CAIXA, COR_BOTAO, COR_BOTAO_HOVER,
     COR_BOLA, POTENCIA_MAX_DRAG, POTENCIA_FATOR,
 )
-from paredes import Parede, Jogador, desenhar_campo, desenhar_mira, atualizar_bola
+from paredes import Parede, Jogador, desenhar_mira
+from agua import Zona, desenhar_campo, desenhar_fim_hole, atualizar_bola
 
 def desenhar_menu(tela, fonte_g, fonte_m, nome, ativo_input, mouse_pos):
     tela.fill(COR_FUNDO)
@@ -58,6 +59,10 @@ def main():
     paredes = [
         Parede(480, 200, 30, 300),
     ]
+    zonas = [
+        Zona(380, 500, 220, 110, "areia"),
+        Zona(110, 120, 140, 90, "agua"),
+    ]
 
     jogador = None
     aiming = False
@@ -98,7 +103,7 @@ def main():
                         nome += ev.unicode
 
             elif estado == "JOGANDO":
-                if jogador and jogador.parou():
+                if jogador and jogador.parou() and not jogador.no_buraco:
                     if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
                         if math.hypot(ev.pos[0] - jogador.x, ev.pos[1] - jogador.y) < 50:
                             aiming = True
@@ -119,9 +124,16 @@ def main():
 
                         aiming = False
 
+            elif estado == "FIM_HOLE":
+                if ev.type == pygame.KEYDOWN and ev.key == pygame.K_SPACE:
+                    jogador.reset(tee)
+                    estado = "JOGANDO"
+
         if estado == "JOGANDO" and jogador:
-            if not jogador.parou():
-                atualizar_bola(jogador, paredes)
+            if not jogador.parou() and not jogador.no_buraco:
+                atualizar_bola(jogador, paredes, hole, zonas)
+                if jogador.no_buraco:
+                    estado = "FIM_HOLE"
 
         if estado == "MENU":
             botao_iniciar, botao_regras = None, None
@@ -130,15 +142,18 @@ def main():
             )
 
         elif estado == "JOGANDO":
-            desenhar_campo(tela, tee, hole, paredes)
+            desenhar_campo(tela, tee, hole, paredes, zonas)
 
             if jogador:
-                jogador.desenhar(tela, ativo=jogador.parou())
-                if aiming and jogador.parou():
+                jogador.desenhar(tela, ativo=jogador.parou() and not jogador.no_buraco)
+                if aiming and jogador.parou() and not jogador.no_buraco:
                     desenhar_mira(tela, jogador, mouse_pos)
 
             hud = fonte_m.render(f"Jogadas: {jogador.tacadas}", True, COR_TEXTO)
             tela.blit(hud, (20, 20))
+
+        elif estado == "FIM_HOLE":
+            desenhar_fim_hole(tela, fonte_g, fonte_m, jogador)
 
         elif estado == "REGRAS":
             tela.fill((20, 20, 20))

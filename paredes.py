@@ -30,6 +30,7 @@ class Jogador:
         self.vy = 0.0
         self.tacadas = 0
         self.pos_inicio_tacada = (0.0, 0.0)
+        self.no_buraco = False
 
     def reset(self, tee):
         self.x = float(tee[0])
@@ -38,6 +39,7 @@ class Jogador:
         self.vy = 0.0
         self.tacadas = 0
         self.pos_inicio_tacada = (self.x, self.y)
+        self.no_buraco = False
 
     def parou(self):
         return abs(self.vx) < VEL_MIN and abs(self.vy) < VEL_MIN
