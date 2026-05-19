@@ -5,9 +5,11 @@ from config import (
     LARGURA, ALTURA, FPS,
     COR_FUNDO, COR_TEXTO, COR_CAIXA, COR_BOTAO, COR_BOTAO_HOVER,
     COR_BOLA, POTENCIA_MAX_DRAG, POTENCIA_FATOR,
+    COR_TUNEL_1,
 )
 from paredes import Parede, Jogador, desenhar_mira
-from agua import Zona, desenhar_campo, desenhar_fim_hole, atualizar_bola
+from agua import Zona, desenhar_fim_hole
+from tuneis import Tunel, desenhar_campo, atualizar_bola
 
 def desenhar_menu(tela, fonte_g, fonte_m, nome, ativo_input, mouse_pos):
     tela.fill(COR_FUNDO)
@@ -62,6 +64,9 @@ def main():
     zonas = [
         Zona(380, 500, 220, 110, "areia"),
         Zona(110, 120, 140, 90, "agua"),
+    ]
+    tuneis = [
+        Tunel((300, 350), (700, 350), COR_TUNEL_1),
     ]
 
     jogador = None
@@ -131,7 +136,7 @@ def main():
 
         if estado == "JOGANDO" and jogador:
             if not jogador.parou() and not jogador.no_buraco:
-                atualizar_bola(jogador, paredes, hole, zonas)
+                atualizar_bola(jogador, paredes, hole, zonas, tuneis)
                 if jogador.no_buraco:
                     estado = "FIM_HOLE"
 
@@ -142,7 +147,7 @@ def main():
             )
 
         elif estado == "JOGANDO":
-            desenhar_campo(tela, tee, hole, paredes, zonas)
+            desenhar_campo(tela, tee, hole, paredes, zonas, tuneis)
 
             if jogador:
                 jogador.desenhar(tela, ativo=jogador.parou() and not jogador.no_buraco)
