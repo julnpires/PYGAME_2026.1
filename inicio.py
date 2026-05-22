@@ -1,6 +1,7 @@
 import pygame
 import math
 import sys
+from paredes_moveis import ParedeMovel
 from config import (
     LARGURA, ALTURA, FPS,
     COR_FUNDO, COR_TEXTO, COR_CAIXA,
