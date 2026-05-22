@@ -180,7 +180,7 @@ def main():
                     estado = "MENU"
         if estado == "JOGANDO" and jogador:
             for pm in fase.paredes_moveis:
-                pm.update(dt)
+                pm.update(dt) #pm update
             if not jogador.parou() and not jogador.no_buraco:
                 atualizar_bola(jogador, fase)
                 if jogador.no_buraco:
