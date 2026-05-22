@@ -244,6 +244,7 @@ def atualizar_bola(j, paredes, buraco_pos):
         j.vx = 0.0
     if abs(j.vy) < VEL_MIN:
         j.vy = 0.0
+    
 
 
 def desenhar_hud(tela, fonte_m, jogador):

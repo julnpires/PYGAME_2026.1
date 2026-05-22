@@ -45,7 +45,7 @@ class Fase:
         self.aguas = aguas or []
         self.tuneis = tuneis or []
         self.esteiras = esteiras or []
-
+    
 def desenhar_menu(tela, fonte_g, fonte_m, nome, ativo_input, mouse_pos):
     tela.fill(COR_FUNDO)
     titulo = fonte_g.render("MINI GOLF", True, COR_TEXTO)

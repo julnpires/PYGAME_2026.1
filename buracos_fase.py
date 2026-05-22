@@ -1,5 +1,6 @@
 import pygame
 import math
+from paredes_moveis import ParedeMovel
 
 from config import (
     LARGURA, ALTURA,
@@ -118,6 +119,8 @@ def atualizar_bola(j, fase):
         j.vx = 0.0
     if abs(j.vy) < VEL_MIN:
         j.vy = 0.0
+    for pm in fase.paredes_moveis:
+        colidir_rect(j, pm.rect)
 
 def desenhar_mira(tela, jogador, mouse_pos):
     mx, my = mouse_pos
@@ -178,6 +181,8 @@ def desenhar_campo(tela, fase):
     pygame.draw.polygon(tela, (220, 50, 50), [(bx, by - 38), (bx + 16, by - 33), (bx, by - 26)])
     for p in fase.paredes:
         p.desenhar(tela)
+    for pm in fase.paredes_moveis:
+        pm.desenhar(tela)
 
 def desenhar_hud(tela, fonte_m, jogador, fase):
     painel = pygame.Surface((LARGURA, 50), pygame.SRCALPHA)
