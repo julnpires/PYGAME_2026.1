@@ -1,0 +1,18 @@
+{
+  "all_time": [
+    {
+      "nome": "l",
+      "total_tacadas": 1,
+      "fases": 1,
+      "media": 1.0,
+      "data": "2026-05-23 15:50"
+    },
+    {
+      "nome": "Test",
+      "total_tacadas": 5,
+      "fases": 1,
+      "media": 5.0,
+      "data": "2026-05-23 15:49"
+    }
+  ]
+}

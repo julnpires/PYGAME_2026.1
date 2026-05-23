@@ -29,6 +29,7 @@ class Jogador:
         self.vx = 0.0
         self.vy = 0.0
         self.tacadas = 0
+        self.tacadas_total = 0
         self.pos_inicio_tacada = (0.0, 0.0)
         self.no_buraco = False
         self.em_tunel = False
@@ -42,6 +43,9 @@ class Jogador:
         self.pos_inicio_tacada = (self.x, self.y)
         self.no_buraco = False
         self.em_tunel = False
+
+    def total(self):
+        return self.tacadas_total + self.tacadas
 
     def parou(self):
         return abs(self.vx) < VEL_MIN and abs(self.vy) < VEL_MIN

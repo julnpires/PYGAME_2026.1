@@ -204,5 +204,5 @@ def desenhar_fim_hole(tela, fonte_g, fonte_m, jogador, fase):
     tela.blit(par, (LARGURA // 2 - par.get_width() // 2, 125))
     info = fonte_m.render(f"{jogador.nome} terminou em {jogador.tacadas} tacadas.", True, COR_TEXTO)
     tela.blit(info, (LARGURA // 2 - info.get_width() // 2, 160))
-    instr = fonte_m.render("Pressione SPACE para continuar", True, COR_TEXTO)
+    instr = fonte_m.render("Pressione SPACE para ver o ranking", True, COR_TEXTO)
     tela.blit(instr, (LARGURA // 2 - instr.get_width() // 2, 230))
