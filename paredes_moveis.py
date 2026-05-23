@@ -9,7 +9,7 @@ from config import (
 
 
 class ParedeMovel:
-    def _init_(
+    def __init__(
         self,
         x_a,
         y_a,

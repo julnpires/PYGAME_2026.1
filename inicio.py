@@ -8,7 +8,7 @@ from config import (
     COR_BOTAO, COR_BOTAO_HOVER,
     COR_BOLA, POTENCIA_MAX_DRAG,
     POTENCIA_FATOR,
-    COR_TUNEL_1,
+    COR_TUNEL_1, COR_TUNEL_2, COR_TUNEL_3,
 )
 
 from paredes import Parede, Jogador
@@ -36,6 +36,7 @@ class Fase:
         aguas=None,
         tuneis=None,
         esteiras=None,
+        paredes_moveis=None,
     ):
         self.numero = numero
         self.par = par
@@ -46,7 +47,164 @@ class Fase:
         self.aguas = aguas or []
         self.tuneis = tuneis or []
         self.esteiras = esteiras or []
-    
+        self.paredes_moveis = paredes_moveis or []
+
+def criar_fases():
+    return [
+        Fase(
+            numero=1,
+            par=3,
+            tee=(130, 350),
+            buraco_pos=(870, 350),
+            paredes=[
+                Parede(0, 0, 1000, 30),
+                Parede(0, 670, 1000, 30),
+                Parede(0, 0, 30, 700),
+                Parede(970, 0, 30, 700),
+                Parede(485, 200, 30, 300),
+            ],
+            areias=[],
+            aguas=[],
+            tuneis=[],
+            esteiras=[],
+            paredes_moveis=[],
+        ),
+
+        Fase(
+            numero=2,
+            par=4,
+            tee=(130, 600),
+            buraco_pos=(870, 250),
+            paredes=[
+                Parede(0, 0, 1000, 30),
+                Parede(0, 670, 1000, 30),
+                Parede(0, 0, 30, 700),
+                Parede(970, 0, 30, 700),
+                Parede(180, 150, 30, 320),
+                Parede(180, 150, 540, 30),
+                Parede(720, 150, 30, 280),
+            ],
+            areias=[
+                Areia(380, 500, 220, 110),
+            ],
+            aguas=[],
+            tuneis=[
+                Tunel((250, 620), (820, 230), COR_TUNEL_1),
+            ],
+            esteiras=[
+                Esteira(775, 350, 50, 200, 0, -1, 0.3),
+            ],
+            paredes_moveis=[],
+        ),
+
+        Fase(
+            numero=3,
+            par=4,
+            tee=(130, 350),
+            buraco_pos=(870, 350),
+            paredes=[
+                Parede(0, 0, 1000, 30),
+                Parede(0, 670, 1000, 30),
+                Parede(0, 0, 30, 700),
+                Parede(970, 0, 30, 700),
+                Parede(450, 80, 30, 130),
+                Parede(450, 490, 30, 140),
+            ],
+            areias=[],
+            aguas=[
+                Agua(380, 230, 240, 240),
+            ],
+            tuneis=[
+                Tunel((280, 350), (720, 350), COR_TUNEL_2),
+            ],
+            esteiras=[],
+            paredes_moveis=[
+                ParedeMovel(370, 110, 30, 100, 370, 480, velocidade=1.2),
+            ],
+        ),
+
+        Fase(
+            numero=4,
+            par=4,
+            tee=(130, 130),
+            buraco_pos=(870, 600),
+            paredes=[
+                Parede(0, 0, 1000, 30),
+                Parede(0, 670, 1000, 30),
+                Parede(0, 0, 30, 700),
+                Parede(970, 0, 30, 700),
+                Parede(220, 80, 30, 240),
+                Parede(220, 290, 280, 30),
+                Parede(620, 380, 30, 260),
+                Parede(380, 380, 270, 30),
+                Parede(750, 200, 30, 200),
+            ],
+            areias=[
+                Areia(700, 60, 80, 130),
+            ],
+            aguas=[
+                Agua(110, 540, 110, 110),
+            ],
+            tuneis=[
+                Tunel((340, 200), (820, 480), COR_TUNEL_3),
+            ],
+            esteiras=[
+                Esteira(280, 340, 90, 40, 1, 0, 0.25),
+            ],
+            paredes_moveis=[],
+        ),
+
+        Fase(
+            numero=5,
+            par=4,
+            tee=(130, 350),
+            buraco_pos=(870, 600),
+            paredes=[
+                Parede(0, 0, 1000, 30),
+                Parede(0, 670, 1000, 30),
+                Parede(0, 0, 30, 700),
+                Parede(970, 0, 30, 700),
+                Parede(485, 30, 30, 640),
+                Parede(515, 380, 470, 30),
+            ],
+            areias=[],
+            aguas=[],
+            tuneis=[
+                Tunel((250, 200), (700, 180), COR_TUNEL_1),
+                Tunel((900, 250), (700, 540), COR_TUNEL_2),
+            ],
+            esteiras=[
+                Esteira(560, 200, 280, 50, -1, 0, 0.25),
+            ],
+            paredes_moveis=[],
+        ),
+
+        Fase(
+            numero=6,
+            par=5,
+            tee=(130, 350),
+            buraco_pos=(900, 350),
+            paredes=[
+                Parede(0, 0, 1000, 30),
+                Parede(0, 670, 1000, 30),
+                Parede(0, 0, 30, 700),
+                Parede(970, 0, 30, 700),
+                Parede(60, 230, 700, 30),
+                Parede(60, 440, 700, 30),
+            ],
+            areias=[],
+            aguas=[],
+            tuneis=[],
+            esteiras=[
+                Esteira(150, 90, 600, 130, 1, 0, 0.28),
+                Esteira(150, 480, 600, 130, -1, 0, 0.22),
+            ],
+            paredes_moveis=[
+                ParedeMovel(250, 290, 30, 130, 450, 290, velocidade=1.4, fase_inicial=0.0),
+                ParedeMovel(550, 290, 30, 130, 700, 290, velocidade=1.6, fase_inicial=1.5),
+            ],
+        ),
+    ]
 def desenhar_menu(tela, fonte_g, fonte_m, nome, ativo_input, mouse_pos):
     tela.fill(COR_FUNDO)
     titulo = fonte_g.render("MINI GOLF", True, COR_TEXTO)
@@ -88,27 +246,9 @@ def main():
     estado = "MENU"
     nome = ""
     input_ativo = True
-    fase = Fase(
-        numero=1,
-        par=4,
-        tee=(130, 350),
-        buraco_pos=(870, 350),
-        paredes=[
-            Parede(480, 200, 30, 300),
-        ],
-        areias=[
-            Areia(380, 500, 220, 110),
-        ],
-        aguas=[
-            Agua(110, 120, 140, 90),
-        ],
-        tuneis=[
-            Tunel((300, 350), (700, 350), COR_TUNEL_1),
-        ],
-        esteiras=[
-            Esteira(280, 340, 90, 40, 1, 0, 0.25),
-        ],
-    )
+    fases = criar_fases()
+    fase_idx = 0
+    fase = fases[fase_idx]
     jogador = None
     aiming = False
     botao_iniciar = None
@@ -172,10 +312,14 @@ def main():
                         aiming = False
             elif estado == "FIM_HOLE":
                 if ev.type == pygame.KEYDOWN and ev.key == pygame.K_SPACE:
-                    nome_atual = jogador.nome
-                    jogador = Jogador(nome_atual, COR_BOLA)
-                    jogador.reset(fase.tee)
-                    estado = "JOGANDO"
+                    fase_idx += 1
+                    if fase_idx >= len(fases):
+                        estado = "REGRAS"   # depois a gente troca isso pela tela final/ranking
+                    else:
+                        fase = fases[fase_idx]
+                        jogador = Jogador(jogador.nome, COR_BOLA)
+                        jogador.reset(fase.tee)
+                        estado = "JOGANDO"
             elif estado == "REGRAS":
                 if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
                     estado = "MENU"
