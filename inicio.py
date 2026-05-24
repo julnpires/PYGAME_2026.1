@@ -60,8 +60,14 @@ def criar_fases():
                 Parede(720, 150, 30, 280),
             ],
             areias=[Areia(380, 500, 220, 110)],
-            tuneis=[Tunel((250, 620), (820, 230), COR_TUNEL_1)],
-            esteiras=[Esteira(775, 350, 50, 200, 0, -1, 0.3)],
+            # água bloqueia o caminho direto pelo centro inferior
+            aguas=[Agua(600, 480, 130, 120)],
+            # saída dentro do ⊓ — obriga a sair do corredor e cruzar o campo
+            tuneis=[Tunel((250, 620), (310, 330), COR_TUNEL_1)],
+            # força aumentada: bola tende a ultrapassar o buraco
+            esteiras=[Esteira(775, 310, 50, 250, 0, -1, 0.52)],
+            # parede oscila na saída do canal, exige timing
+            paredes_moveis=[ParedeMovel(755, 295, 175, 25, 755, 440, velocidade=1.0)],
         ),
 
         Fase(
