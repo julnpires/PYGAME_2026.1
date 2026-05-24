@@ -320,10 +320,7 @@ def main():
             if ev.type == pygame.QUIT:
                 rodando = False
             if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
-                if estado in ("RANKING", "REGRAS"):
-                    estado = "MENU"
-                elif estado == "MENU":
-                    rodando = False
+                rodando = False
 
             # ── MENU ──────────────────────────────────────────────────────
             if estado == "MENU":
