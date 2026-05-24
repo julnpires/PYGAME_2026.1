@@ -184,25 +184,68 @@ def desenhar_campo(tela, fase):
     for pm in fase.paredes_moveis:
         pm.desenhar(tela)
 
-def desenhar_hud(tela, fonte_m, jogador, fase):
-    painel = pygame.Surface((LARGURA, 50), pygame.SRCALPHA)
-    painel.fill((0, 0, 0, 120))
+def desenhar_hud(tela, fonte_m, fonte_s, jogadores, jogador_idx, fase):
+    painel = pygame.Surface((LARGURA, 55), pygame.SRCALPHA)
+    painel.fill((0, 0, 0, 130))
     tela.blit(painel, (0, 0))
-    info = fonte_m.render(f"Buraco {fase.numero}  •  Par {fase.par}", True, COR_TEXTO)
-    tela.blit(info, (40, 12))
-    vez = fonte_m.render(f"Vez: {jogador.nome}  (tacadas: {jogador.tacadas})", True, COR_TEXTO)
-    tela.blit(vez, (LARGURA // 2 - vez.get_width() // 2, 12))
 
-def desenhar_fim_hole(tela, fonte_g, fonte_m, jogador, fase):
+    info = fonte_m.render(f"Buraco {fase.numero}  •  Par {fase.par}", True, COR_TEXTO)
+    tela.blit(info, (20, 15))
+
+    j = jogadores[jogador_idx]
+    vez = fonte_m.render(f"▶  {j.nome}", True, j.cor)
+    tela.blit(vez, (LARGURA // 2 - vez.get_width() // 2, 15))
+
+    x = LARGURA - 15
+    for jj in reversed(jogadores):
+        t = fonte_s.render(f"{jj.nome[:8]}: {jj.tacadas}", True, jj.cor)
+        x -= t.get_width() + 18
+        tela.blit(t, (x, 19))
+
+
+def _label_par(tacadas, par):
+    d = tacadas - par
+    return {-3: "Albatross", -2: "Eagle", -1: "Birdie", 0: "Par", 1: "Bogey", 2: "Double Bogey"}.get(d, f"+{d}" if d > 0 else str(d))
+
+
+def desenhar_fim_hole(tela, fonte_g, fonte_m, fonte_s, jogadores, fase, ultimo=False):
     tela.fill(COR_FUNDO)
     for y in range(0, ALTURA, 30):
         if (y // 30) % 2 == 0:
             pygame.draw.rect(tela, COR_GRAMA_CLARA, (0, y, LARGURA, 15))
-    titulo = fonte_g.render(f"Buraco {fase.numero} concluido", True, COR_TEXTO)
-    tela.blit(titulo, (LARGURA // 2 - titulo.get_width() // 2, 80))
-    par = fonte_m.render(f"Par {fase.par}", True, (230, 230, 200))
-    tela.blit(par, (LARGURA // 2 - par.get_width() // 2, 125))
-    info = fonte_m.render(f"{jogador.nome} terminou em {jogador.tacadas} tacadas.", True, COR_TEXTO)
-    tela.blit(info, (LARGURA // 2 - info.get_width() // 2, 160))
-    instr = fonte_m.render("Pressione SPACE para ver o ranking", True, COR_TEXTO)
-    tela.blit(instr, (LARGURA // 2 - instr.get_width() // 2, 230))
+
+    titulo = fonte_g.render(f"Buraco {fase.numero} concluído", True, COR_TEXTO)
+    tela.blit(titulo, (LARGURA // 2 - titulo.get_width() // 2, 70))
+    par_txt = fonte_m.render(f"Par  {fase.par}", True, (230, 230, 200))
+    tela.blit(par_txt, (LARGURA // 2 - par_txt.get_width() // 2, 125))
+
+    painel_y = 175
+    painel_h = 60 + len(jogadores) * 48
+    painel = pygame.Rect(LARGURA // 2 - 260, painel_y, 520, painel_h)
+    pygame.draw.rect(tela, (20, 50, 25), painel, border_radius=10)
+    pygame.draw.rect(tela, (60, 100, 65), painel, 2, border_radius=10)
+
+    cab = fonte_s.render("Jogador", True, (160, 200, 160))
+    tela.blit(cab, (painel.x + 20, painel_y + 12))
+    cab2 = fonte_s.render("Tacadas", True, (160, 200, 160))
+    tela.blit(cab2, (painel.x + 310, painel_y + 12))
+    cab3 = fonte_s.render("Resultado", True, (160, 200, 160))
+    tela.blit(cab3, (painel.x + 400, painel_y + 12))
+    pygame.draw.line(tela, (60, 100, 65), (painel.x + 10, painel_y + 34), (painel.right - 10, painel_y + 34), 1)
+
+    for i, j in enumerate(jogadores):
+        ry = painel_y + 44 + i * 48
+        pygame.draw.circle(tela, j.cor, (painel.x + 20, ry + 14), 8)
+        nome_t = fonte_m.render(j.nome[:14], True, j.cor)
+        tela.blit(nome_t, (painel.x + 36, ry))
+        tac_t = fonte_m.render(str(j.tacadas), True, COR_TEXTO)
+        tela.blit(tac_t, (painel.x + 320, ry))
+        label = _label_par(j.tacadas, fase.par)
+        diff = j.tacadas - fase.par
+        cor_label = (80, 200, 120) if diff < 0 else (230, 230, 230) if diff == 0 else (230, 120, 80)
+        lab_t = fonte_s.render(label, True, cor_label)
+        tela.blit(lab_t, (painel.x + 408, ry + 4))
+
+    msg = "SPACE — ver ranking" if ultimo else "SPACE — próximo buraco"
+    instr = fonte_m.render(msg, True, COR_TEXTO)
+    tela.blit(instr, (LARGURA // 2 - instr.get_width() // 2, painel.bottom + 30))

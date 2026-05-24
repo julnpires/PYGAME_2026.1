@@ -40,6 +40,13 @@ COR_ESTEIRA = (95, 110, 145)
 COR_ESTEIRA_DARK = (50, 65, 95)
 COR_ESTEIRA_SETA = (220, 230, 255)
 
+CORES_JOGADORES = [
+    (255, 95,  95),   # vermelho
+    (80,  160, 255),  # azul
+    (80,  230, 120),  # verde
+    (255, 220, 60),   # amarelo
+]
+
 COR_PMOVEL = (170, 70, 110)
 COR_PMOVEL_DARK = (100, 30, 65)
 COR_PMOVEL_PATH = (140, 90, 110)

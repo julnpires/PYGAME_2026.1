@@ -4,10 +4,11 @@ import math
 from paredes_moveis import ParedeMovel
 from config import (
     LARGURA, ALTURA, FPS,
-    COR_FUNDO, COR_TEXTO, COR_CAIXA,
+    COR_FUNDO, COR_GRAMA_CLARA, COR_TEXTO, COR_CAIXA,
     COR_BOTAO, COR_BOTAO_HOVER,
-    COR_BOLA, POTENCIA_MAX_DRAG, POTENCIA_FATOR,
+    POTENCIA_MAX_DRAG, POTENCIA_FATOR,
     COR_TUNEL_1, COR_TUNEL_2, COR_TUNEL_3,
+    CORES_JOGADORES,
 )
 from paredes import Parede, Jogador
 from areia import Areia
@@ -23,6 +24,8 @@ from buracos_fase import (
 )
 from ranking.ranking import adicionar_ao_ranking, carregar_ranking
 
+
+# ── Fase ──────────────────────────────────────────────────────────────────────
 
 class Fase:
     def __init__(self, numero, par, tee, buraco_pos,
@@ -60,13 +63,9 @@ def criar_fases():
                 Parede(720, 150, 30, 280),
             ],
             areias=[Areia(380, 500, 220, 110)],
-            # água bloqueia o caminho direto pelo centro inferior
             aguas=[Agua(600, 480, 130, 120)],
-            # saída dentro do ⊓ — obriga a sair do corredor e cruzar o campo
             tuneis=[Tunel((250, 620), (310, 330), COR_TUNEL_1)],
-            # força aumentada: bola tende a ultrapassar o buraco
             esteiras=[Esteira(775, 310, 50, 250, 0, -1, 0.52)],
-            # parede oscila na saída do canal, exige timing
             paredes_moveis=[ParedeMovel(755, 295, 175, 25, 755, 440, velocidade=1.0)],
         ),
 
@@ -130,202 +129,333 @@ def criar_fases():
     ]
 
 
-def desenhar_menu(tela, fonte_g, fonte_m, nome, ativo_input, mouse_pos):
-    tela.fill(COR_FUNDO)
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+def proximo_jogador(jogadores, atual):
+    n = len(jogadores)
+    for i in range(1, n + 1):
+        idx = (atual + i) % n
+        if not jogadores[idx].no_buraco:
+            return idx
+    return atual
+
+
+# ── Menu ──────────────────────────────────────────────────────────────────────
+
+def desenhar_menu(surf, fonte_g, fonte_m, fonte_s,
+                  cadastrados, nome_input, ativo_input, mouse_pos):
+    surf.fill(COR_FUNDO)
+    for y in range(0, ALTURA, 30):
+        if (y // 30) % 2 == 0:
+            pygame.draw.rect(surf, COR_GRAMA_CLARA, (0, y, LARGURA, 15))
+
     titulo = fonte_g.render("MINI GOLF", True, COR_TEXTO)
-    tela.blit(titulo, (LARGURA // 2 - titulo.get_width() // 2, 80))
+    surf.blit(titulo, (LARGURA // 2 - titulo.get_width() // 2, 30))
 
-    box = pygame.Rect(LARGURA // 2 - 200, 220, 400, 50)
-    pygame.draw.rect(tela, COR_CAIXA, box, border_radius=8)
-    pygame.draw.rect(tela, COR_TEXTO, box, 2, border_radius=8)
+    # ── painel de jogadores (2×2) ──────────────────────────────────────────
+    panel = pygame.Rect(LARGURA // 2 - 270, 110, 540, 195)
+    pygame.draw.rect(surf, COR_CAIXA, panel, border_radius=10)
+    pygame.draw.rect(surf, (80, 120, 85), panel, 2, border_radius=10)
+    lbl = fonte_s.render("Jogadores  (máx. 4)", True, (160, 200, 160))
+    surf.blit(lbl, (panel.x + 12, panel.y + 8))
+
+    slot_w, slot_h = 245, 72
+    slots_pos = [
+        (panel.x + 10,  panel.y + 35),
+        (panel.x + 285, panel.y + 35),
+        (panel.x + 10,  panel.y + 115),
+        (panel.x + 285, panel.y + 115),
+    ]
+    for i, (sx, sy) in enumerate(slots_pos):
+        slot = pygame.Rect(sx, sy, slot_w, slot_h)
+        if i < len(cadastrados):
+            nome_c, cor_c = cadastrados[i]
+            bg = tuple(max(0, c // 5) for c in cor_c)
+            pygame.draw.rect(surf, bg, slot, border_radius=8)
+            pygame.draw.rect(surf, cor_c, slot, 2, border_radius=8)
+            pygame.draw.circle(surf, cor_c, (sx + 18, sy + slot_h // 2), 9)
+            t = fonte_m.render(nome_c, True, cor_c)
+            surf.blit(t, (sx + 34, sy + slot_h // 2 - t.get_height() // 2))
+        else:
+            pygame.draw.rect(surf, (28, 52, 32), slot, border_radius=8)
+            pygame.draw.rect(surf, (55, 80, 60), slot, 1, border_radius=8)
+            v = fonte_s.render("— vazio —", True, (70, 100, 75))
+            surf.blit(v, (sx + slot_w // 2 - v.get_width() // 2,
+                          sy + slot_h // 2 - v.get_height() // 2))
+
+    # ── input ──────────────────────────────────────────────────────────────
+    box = pygame.Rect(LARGURA // 2 - 200, 330, 400, 45)
+    pygame.draw.rect(surf, COR_CAIXA, box, border_radius=8)
+    borda = COR_TEXTO if ativo_input else (80, 110, 85)
+    pygame.draw.rect(surf, borda, box, 2, border_radius=8)
+    nome_lbl = fonte_s.render("Nome do jogador:", True, (180, 210, 180))
+    surf.blit(nome_lbl, (box.x, box.y - 22))
     cursor = "_" if (pygame.time.get_ticks() // 500) % 2 == 0 and ativo_input else ""
-    txt = fonte_m.render(nome + cursor, True, COR_TEXTO)
-    tela.blit(txt, (box.x + 10, box.y + 12))
-    label = fonte_m.render("Digite seu nome:", True, COR_TEXTO)
-    tela.blit(label, (box.x, box.y - 30))
+    surf.blit(fonte_m.render(nome_input + cursor, True, COR_TEXTO), (box.x + 10, box.y + 10))
 
-    botao_iniciar = pygame.Rect(LARGURA // 2 - 150, 320, 300, 50)
-    botao_regras  = pygame.Rect(LARGURA // 2 - 150, 390, 300, 50)
-    botao_ranking = pygame.Rect(LARGURA // 2 - 150, 460, 300, 50)
+    # ── botões ─────────────────────────────────────────────────────────────
+    b_add  = pygame.Rect(LARGURA // 2 - 215, 392, 200, 42)
+    b_rem  = pygame.Rect(LARGURA // 2 + 15,  392, 200, 42)
+    b_ini  = pygame.Rect(LARGURA // 2 - 150, 450, 300, 50)
+    b_how  = pygame.Rect(LARGURA // 2 - 150, 515, 300, 45)
+    b_rank = pygame.Rect(LARGURA // 2 - 150, 575, 300, 45)
 
-    for botao, texto in [
-        (botao_iniciar, "Iniciar"),
-        (botao_regras,  "Como Jogar"),
-        (botao_ranking, "Ranking"),
-    ]:
-        cor = COR_BOTAO_HOVER if botao.collidepoint(mouse_pos) else COR_BOTAO
-        pygame.draw.rect(tela, cor, botao, border_radius=8)
-        pygame.draw.rect(tela, COR_TEXTO, botao, 2, border_radius=8)
-        t = fonte_m.render(texto, True, COR_TEXTO)
-        tela.blit(t, (botao.centerx - t.get_width() // 2, botao.centery - t.get_height() // 2))
+    pode_add = len(cadastrados) < 4 and bool(nome_input.strip())
+    pode_rem = len(cadastrados) > 0
+    pode_ini = len(cadastrados) > 0
 
-    return box, botao_iniciar, botao_regras, botao_ranking
+    def btn(rect, texto, ativo=True):
+        hover = rect.collidepoint(mouse_pos) and ativo
+        cor_bg = COR_BOTAO_HOVER if hover else (COR_BOTAO if ativo else (22, 45, 27))
+        cor_bd = COR_TEXTO if ativo else (55, 80, 60)
+        pygame.draw.rect(surf, cor_bg, rect, border_radius=8)
+        pygame.draw.rect(surf, cor_bd, rect, 2, border_radius=8)
+        t = fonte_m.render(texto, True, cor_bd)
+        surf.blit(t, (rect.centerx - t.get_width() // 2,
+                      rect.centery - t.get_height() // 2))
+
+    btn(b_add,  "Adicionar",   pode_add)
+    btn(b_rem,  "Remover",     pode_rem)
+    btn(b_ini,  "Iniciar",     pode_ini)
+    btn(b_how,  "Como Jogar")
+    btn(b_rank, "Ranking")
+
+    return box, b_add, b_rem, b_ini, b_how, b_rank
 
 
-def desenhar_ranking_tela(tela, fonte_g, fonte_m, fonte_mono):
+# ── Ranking ───────────────────────────────────────────────────────────────────
+
+def desenhar_ranking_tela(surf, fonte_g, fonte_m, fonte_mono):
     data = carregar_ranking()
-    tela.fill((15, 35, 20))
+    surf.fill((15, 35, 20))
 
     titulo = fonte_g.render("RANKING", True, COR_TEXTO)
-    tela.blit(titulo, (LARGURA // 2 - titulo.get_width() // 2, 30))
+    surf.blit(titulo, (LARGURA // 2 - titulo.get_width() // 2, 30))
 
     cab = fonte_mono.render(
         f"{'#':<4}{'Nome':<16}{'Tacadas':<10}{'Fases':<8}{'Media':<8}Data",
         True, (160, 200, 160),
     )
-    tela.blit(cab, (60, 105))
-    pygame.draw.line(tela, (70, 120, 80), (60, 128), (LARGURA - 60, 128), 1)
+    surf.blit(cab, (60, 105))
+    pygame.draw.line(surf, (70, 120, 80), (60, 128), (LARGURA - 60, 128), 1)
 
     cores_pos = {0: (220, 200, 60), 1: (190, 190, 190), 2: (210, 140, 70)}
     for i, e in enumerate(data.get("all_time", [])[:15]):
         cor = cores_pos.get(i, COR_TEXTO)
         linha = fonte_mono.render(
-            f"{i + 1:<4}{e['nome'][:14]:<16}{e['total_tacadas']:<10}{e['fases']:<8}{e['media']:<8}{e['data']}",
+            f"{i + 1:<4}{e['nome'][:14]:<16}{e['total_tacadas']:<10}"
+            f"{e['fases']:<8}{e['media']:<8}{e['data']}",
             True, cor,
         )
-        tela.blit(linha, (60, 140 + i * 30))
+        surf.blit(linha, (60, 140 + i * 30))
 
     esc = fonte_m.render("ESC — voltar ao menu", True, (130, 170, 130))
-    tela.blit(esc, (LARGURA // 2 - esc.get_width() // 2, ALTURA - 45))
+    surf.blit(esc, (LARGURA // 2 - esc.get_width() // 2, ALTURA - 45))
 
+
+# ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
     pygame.init()
-    tela = pygame.display.set_mode((LARGURA, ALTURA))
-    pygame.display.set_caption("Mini Golf")
-    clock = pygame.time.Clock()
 
+    # Tela cheia com resolução do monitor
+    info = pygame.display.Info()
+    TELA_W, TELA_H = info.current_w, info.current_h
+    tela = pygame.display.set_mode((TELA_W, TELA_H), pygame.FULLSCREEN)
+    pygame.display.set_caption("Mini Golf")
+
+    # Letterbox: mantém proporção 1000×700
+    ratio = LARGURA / ALTURA
+    if TELA_W / TELA_H >= ratio:
+        h_sc = TELA_H
+        w_sc = int(TELA_H * ratio)
+    else:
+        w_sc = TELA_W
+        h_sc = int(TELA_W / ratio)
+    off_x = (TELA_W - w_sc) // 2
+    off_y = (TELA_H - h_sc) // 2
+
+    surf = pygame.Surface((LARGURA, ALTURA))
+
+    def mouse_jogo():
+        rx, ry = pygame.mouse.get_pos()
+        return (
+            (rx - off_x) * LARGURA / w_sc,
+            (ry - off_y) * ALTURA / h_sc,
+        )
+
+    def ev_jogo(pos):
+        return (
+            (pos[0] - off_x) * LARGURA / w_sc,
+            (pos[1] - off_y) * ALTURA / h_sc,
+        )
+
+    clock = pygame.time.Clock()
     fonte_g    = pygame.font.SysFont("Arial", 48, bold=True)
     fonte_m    = pygame.font.SysFont("Arial", 24)
+    fonte_s    = pygame.font.SysFont("Arial", 18)
     fonte_mono = pygame.font.SysFont("Courier New", 18)
 
-    estado      = "MENU"
-    nome        = ""
+    # ── estado do jogo ──────────────────────────────────────────────────────
+    estado     = "MENU"
+    cadastrados = []          # [(nome, cor), ...]
+    nome_input  = ""
     input_ativo = True
+
     fases       = criar_fases()
     fase_idx    = 0
     fase        = fases[fase_idx]
-    jogador     = None
+    jogadores   = []
+    jogador_idx = 0
     aiming      = False
 
-    botao_iniciar = botao_regras = botao_ranking = None
+    box = b_add = b_rem = b_ini = b_how = b_rank = None
 
     rodando = True
     while rodando:
-        mouse_pos = pygame.mouse.get_pos()
+        mouse_pos = mouse_jogo()
         dt = clock.tick(FPS) / 1000.0
 
         for ev in pygame.event.get():
             if ev.type == pygame.QUIT:
                 rodando = False
+            if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
+                if estado in ("RANKING", "REGRAS"):
+                    estado = "MENU"
+                elif estado == "MENU":
+                    rodando = False
 
-            # ── MENU ──────────────────────────────────────────────
+            # ── MENU ──────────────────────────────────────────────────────
             if estado == "MENU":
                 if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
-                    box_atual = pygame.Rect(LARGURA // 2 - 200, 220, 400, 50)
-                    input_ativo = box_atual.collidepoint(ev.pos)
+                    gpos = ev_jogo(ev.pos)
+                    input_ativo = box.collidepoint(gpos) if box else False
 
-                    if botao_iniciar and botao_iniciar.collidepoint(ev.pos) and nome.strip():
+                    if b_add and b_add.collidepoint(gpos) and nome_input.strip() and len(cadastrados) < 4:
+                        cor = CORES_JOGADORES[len(cadastrados)]
+                        cadastrados.append((nome_input.strip(), cor))
+                        nome_input = ""
+
+                    elif b_rem and b_rem.collidepoint(gpos) and cadastrados:
+                        cadastrados.pop()
+
+                    elif b_ini and b_ini.collidepoint(gpos) and cadastrados:
                         fases = criar_fases()
                         fase_idx = 0
                         fase = fases[fase_idx]
-                        jogador = Jogador(nome.strip(), COR_BOLA)
-                        jogador.reset(fase.tee)
+                        jogadores = [Jogador(n, c) for n, c in cadastrados]
+                        for j in jogadores:
+                            j.reset(fase.tee)
+                        jogador_idx = 0
+                        aiming = False
                         estado = "JOGANDO"
 
-                    elif botao_regras and botao_regras.collidepoint(ev.pos):
+                    elif b_how and b_how.collidepoint(gpos):
                         estado = "REGRAS"
 
-                    elif botao_ranking and botao_ranking.collidepoint(ev.pos):
+                    elif b_rank and b_rank.collidepoint(gpos):
                         estado = "RANKING"
 
                 if ev.type == pygame.KEYDOWN and input_ativo:
                     if ev.key == pygame.K_BACKSPACE:
-                        nome = nome[:-1]
-                    elif ev.key == pygame.K_RETURN and nome.strip():
-                        fases = criar_fases()
-                        fase_idx = 0
-                        fase = fases[fase_idx]
-                        jogador = Jogador(nome.strip(), COR_BOLA)
-                        jogador.reset(fase.tee)
-                        estado = "JOGANDO"
-                    elif ev.unicode.isprintable() and len(nome) < 12:
-                        nome += ev.unicode
+                        nome_input = nome_input[:-1]
+                    elif ev.key == pygame.K_RETURN:
+                        if nome_input.strip() and len(cadastrados) < 4:
+                            cor = CORES_JOGADORES[len(cadastrados)]
+                            cadastrados.append((nome_input.strip(), cor))
+                            nome_input = ""
+                    elif ev.unicode.isprintable() and len(nome_input) < 14:
+                        nome_input += ev.unicode
 
-            # ── JOGANDO ───────────────────────────────────────────
-            elif estado == "JOGANDO":
-                if jogador and jogador.parou() and not jogador.no_buraco:
+            # ── JOGANDO ───────────────────────────────────────────────────
+            elif estado == "JOGANDO" and jogadores:
+                jatual = jogadores[jogador_idx]
+                if jatual.parou() and not jatual.no_buraco:
                     if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
-                        if math.hypot(ev.pos[0] - jogador.x, ev.pos[1] - jogador.y) < 50:
+                        gpos = ev_jogo(ev.pos)
+                        if math.hypot(gpos[0] - jatual.x, gpos[1] - jatual.y) < 50:
                             aiming = True
                     elif ev.type == pygame.MOUSEBUTTONUP and ev.button == 1 and aiming:
-                        mx, my = ev.pos
-                        dx = jogador.x - mx
-                        dy = jogador.y - my
+                        gpos = ev_jogo(ev.pos)
+                        dx = jatual.x - gpos[0]
+                        dy = jatual.y - gpos[1]
                         dist = math.hypot(dx, dy)
                         if dist > 8:
                             dist_cap = min(dist, POTENCIA_MAX_DRAG)
                             dx_n, dy_n = dx / dist, dy / dist
-                            jogador.pos_inicio_tacada = (jogador.x, jogador.y)
-                            jogador.vx = dx_n * dist_cap * POTENCIA_FATOR
-                            jogador.vy = dy_n * dist_cap * POTENCIA_FATOR
-                            jogador.tacadas += 1
+                            jatual.pos_inicio_tacada = (jatual.x, jatual.y)
+                            jatual.vx = dx_n * dist_cap * POTENCIA_FATOR
+                            jatual.vy = dy_n * dist_cap * POTENCIA_FATOR
+                            jatual.tacadas += 1
                         aiming = False
 
-            # ── FIM DO BURACO ─────────────────────────────────────
+            # ── FIM DO BURACO ─────────────────────────────────────────────
             elif estado == "FIM_HOLE":
                 if ev.type == pygame.KEYDOWN and ev.key == pygame.K_SPACE:
+                    aiming = False
+                    for j in jogadores:
+                        j.tacadas_total += j.tacadas
                     fase_idx += 1
                     if fase_idx >= len(fases):
-                        adicionar_ao_ranking([jogador], len(fases))
+                        adicionar_ao_ranking(jogadores, len(fases))
                         estado = "RANKING"
                     else:
-                        jogador.tacadas_total += jogador.tacadas
                         fase = fases[fase_idx]
-                        jogador.reset(fase.tee)
+                        for j in jogadores:
+                            j.reset(fase.tee)
+                        jogador_idx = 0
                         estado = "JOGANDO"
 
-            # ── RANKING / REGRAS ──────────────────────────────────
-            elif estado in ("RANKING", "REGRAS"):
-                if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
-                    estado = "MENU"
-
-        # ── FÍSICA + PAREDES MÓVEIS ───────────────────────────────
-        if estado == "JOGANDO" and jogador and fase:
+        # ── FÍSICA ────────────────────────────────────────────────────────
+        if estado == "JOGANDO" and jogadores and fase:
+            jatual = jogadores[jogador_idx]
             for pm in fase.paredes_moveis:
                 pm.update(dt)
-            if not jogador.parou() and not jogador.no_buraco:
-                atualizar_bola(jogador, fase)
-                if jogador.no_buraco:
-                    estado = "FIM_HOLE"
 
-        # ── DESENHO ───────────────────────────────────────────────
+            if not jatual.parou() and not jatual.no_buraco:
+                atualizar_bola(jatual, fase)
+                if jatual.no_buraco:
+                    if all(j.no_buraco for j in jogadores):
+                        estado = "FIM_HOLE"
+                    else:
+                        jogador_idx = proximo_jogador(jogadores, jogador_idx)
+                        aiming = False
+
+        # ── DESENHO (para surf 1000×700) ──────────────────────────────────
         if estado == "MENU":
-            _, botao_iniciar, botao_regras, botao_ranking = desenhar_menu(
-                tela, fonte_g, fonte_m, nome, input_ativo, mouse_pos
+            box, b_add, b_rem, b_ini, b_how, b_rank = desenhar_menu(
+                surf, fonte_g, fonte_m, fonte_s,
+                cadastrados, nome_input, input_ativo, mouse_pos,
             )
 
-        elif estado == "JOGANDO" and fase:
-            desenhar_campo(tela, fase)
-            if jogador:
-                jogador.desenhar(tela, ativo=jogador.parou() and not jogador.no_buraco)
-                if aiming and jogador.parou() and not jogador.no_buraco:
-                    desenhar_mira(tela, jogador, mouse_pos)
-            desenhar_hud(tela, fonte_m, jogador, fase)
+        elif estado == "JOGANDO" and jogadores and fase:
+            jatual = jogadores[jogador_idx]
+            desenhar_campo(surf, fase)
+            for i, j in enumerate(jogadores):
+                if not j.no_buraco:
+                    j.desenhar(surf, ativo=(i == jogador_idx and j.parou()))
+            if aiming and jatual.parou():
+                desenhar_mira(surf, jatual, mouse_pos)
+            desenhar_hud(surf, fonte_m, fonte_s, jogadores, jogador_idx, fase)
 
-        elif estado == "FIM_HOLE" and fase:
-            desenhar_fim_hole(tela, fonte_g, fonte_m, jogador, fase)
+        elif estado == "FIM_HOLE" and fase and jogadores:
+            ultimo = (fase_idx + 1 >= len(fases))
+            desenhar_fim_hole(surf, fonte_g, fonte_m, fonte_s, jogadores, fase, ultimo)
 
         elif estado == "RANKING":
-            desenhar_ranking_tela(tela, fonte_g, fonte_m, fonte_mono)
+            desenhar_ranking_tela(surf, fonte_g, fonte_m, fonte_mono)
 
         elif estado == "REGRAS":
-            tela.fill((20, 20, 20))
+            surf.fill((20, 20, 20))
             txt = fonte_m.render("Tela de regras (placeholder)", True, COR_TEXTO)
-            tela.blit(txt, (LARGURA // 2 - txt.get_width() // 2, 300))
-            esc = fonte_m.render("ESC — voltar ao menu", True, (150, 150, 150))
-            tela.blit(esc, (LARGURA // 2 - esc.get_width() // 2, ALTURA - 45))
+            surf.blit(txt, (LARGURA // 2 - txt.get_width() // 2, 300))
+            esc = fonte_s.render("ESC — voltar ao menu", True, (150, 150, 150))
+            surf.blit(esc, (LARGURA // 2 - esc.get_width() // 2, ALTURA - 45))
 
+        # ── Escala surf → tela real ────────────────────────────────────────
+        tela.fill((0, 0, 0))
+        scaled = pygame.transform.scale(surf, (w_sc, h_sc))
+        tela.blit(scaled, (off_x, off_y))
         pygame.display.flip()
 
     pygame.quit()
