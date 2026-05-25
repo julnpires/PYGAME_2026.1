@@ -1,5 +1,6 @@
 import pygame
 import sys
+import os
 import math
 from paredes_moveis import ParedeMovel
 from config import (
@@ -24,9 +25,6 @@ from buracos_fase import (
 )
 from ranking.ranking import adicionar_ao_ranking, carregar_ranking
 
-
-# ── Fase ──────────────────────────────────────────────────────────────────────
-
 class Fase:
     def __init__(self, numero, par, tee, buraco_pos,
                  paredes=None, areias=None, aguas=None,
@@ -41,7 +39,6 @@ class Fase:
         self.tuneis = tuneis or []
         self.esteiras = esteiras or []
         self.paredes_moveis = paredes_moveis or []
-
 
 def criar_fases():
     return [
@@ -130,9 +127,6 @@ def criar_fases():
         ),
     ]
 
-
-# ── Helpers ───────────────────────────────────────────────────────────────────
-
 def proximo_jogador(jogadores, atual):
     n = len(jogadores)
     for i in range(1, n + 1):
@@ -140,9 +134,6 @@ def proximo_jogador(jogadores, atual):
         if not jogadores[idx].no_buraco:
             return idx
     return atual
-
-
-# ── Menu ──────────────────────────────────────────────────────────────────────
 
 def desenhar_menu(surf, fonte_g, fonte_m, fonte_s,
                   cadastrados, nome_input, ativo_input, mouse_pos):
@@ -185,7 +176,6 @@ def desenhar_menu(surf, fonte_g, fonte_m, fonte_s,
             surf.blit(v, (sx + slot_w // 2 - v.get_width() // 2,
                           sy + slot_h // 2 - v.get_height() // 2))
 
-    # ── input ──────────────────────────────────────────────────────────────
     box = pygame.Rect(LARGURA // 2 - 200, 330, 400, 45)
     pygame.draw.rect(surf, COR_CAIXA, box, border_radius=8)
     borda = COR_TEXTO if ativo_input else (80, 110, 85)
@@ -195,7 +185,6 @@ def desenhar_menu(surf, fonte_g, fonte_m, fonte_s,
     cursor = "_" if (pygame.time.get_ticks() // 500) % 2 == 0 and ativo_input else ""
     surf.blit(fonte_m.render(nome_input + cursor, True, COR_TEXTO), (box.x + 10, box.y + 10))
 
-    # ── botões ─────────────────────────────────────────────────────────────
     b_add  = pygame.Rect(LARGURA // 2 - 215, 392, 200, 42)
     b_rem  = pygame.Rect(LARGURA // 2 + 15,  392, 200, 42)
     b_ini  = pygame.Rect(LARGURA // 2 - 150, 450, 300, 50)
@@ -224,9 +213,6 @@ def desenhar_menu(surf, fonte_g, fonte_m, fonte_s,
 
     return box, b_add, b_rem, b_ini, b_how, b_rank
 
-
-# ── Ranking ───────────────────────────────────────────────────────────────────
-
 def desenhar_ranking_tela(surf, fonte_g, fonte_m, fonte_mono):
     data = carregar_ranking()
     surf.fill((15, 35, 20))
@@ -254,19 +240,14 @@ def desenhar_ranking_tela(surf, fonte_g, fonte_m, fonte_mono):
     esc = fonte_m.render("ESC — voltar ao menu", True, (130, 170, 130))
     surf.blit(esc, (LARGURA // 2 - esc.get_width() // 2, ALTURA - 45))
 
-
-# ── Main ──────────────────────────────────────────────────────────────────────
-
 def main():
     pygame.init()
-
+    pygame.mixer.init()
     # Tela cheia com resolução do monitor
     info = pygame.display.Info()
     TELA_W, TELA_H = info.current_w, info.current_h
     tela = pygame.display.set_mode((TELA_W, TELA_H), pygame.FULLSCREEN)
     pygame.display.set_caption("Mini Golf")
-
-    # Letterbox: mantém proporção 1000×700
     ratio = LARGURA / ALTURA
     if TELA_W / TELA_H >= ratio:
         h_sc = TELA_H
@@ -297,8 +278,9 @@ def main():
     fonte_m    = pygame.font.SysFont("Arial", 24)
     fonte_s    = pygame.font.SysFont("Arial", 18)
     fonte_mono = pygame.font.SysFont("Courier New", 18)
+    som_tacada = pygame.mixer.Sound("assets/sounds/single-knock.wav")
+    som_buraco = pygame.mixer.Sound("assets/sounds/the-ball-hit-the-hole.wav")
 
-    # ── estado do jogo ──────────────────────────────────────────────────────
     estado     = "MENU"
     cadastrados = []          # [(nome, cor), ...]
     nome_input  = ""
@@ -323,8 +305,6 @@ def main():
                 rodando = False
             if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
                 rodando = False
-
-            # ── MENU ──────────────────────────────────────────────────────
             if estado == "MENU":
                 if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
                     gpos = ev_jogo(ev.pos)
@@ -366,7 +346,6 @@ def main():
                     elif ev.unicode.isprintable() and len(nome_input) < 14:
                         nome_input += ev.unicode
 
-            # ── JOGANDO ───────────────────────────────────────────────────
             elif estado == "JOGANDO" and jogadores:
                 jatual = jogadores[jogador_idx]
                 if jatual.parou() and not jatual.no_buraco:
@@ -386,9 +365,9 @@ def main():
                             jatual.vx = dx_n * dist_cap * POTENCIA_FATOR
                             jatual.vy = dy_n * dist_cap * POTENCIA_FATOR
                             jatual.tacadas += 1
+                            som_tacada.play()
                         aiming = False
 
-            # ── FIM DO BURACO ─────────────────────────────────────────────
             elif estado == "FIM_HOLE":
                 if ev.type == pygame.KEYDOWN and ev.key == pygame.K_SPACE:
                     aiming = False
@@ -405,7 +384,6 @@ def main():
                         jogador_idx = 0
                         estado = "JOGANDO"
 
-        # ── FÍSICA ────────────────────────────────────────────────────────
         if estado == "JOGANDO" and jogadores and fase:
             jatual = jogadores[jogador_idx]
             for pm in fase.paredes_moveis:
@@ -414,13 +392,13 @@ def main():
             if not jatual.parou() and not jatual.no_buraco:
                 atualizar_bola(jatual, fase)
                 if jatual.no_buraco:
+                    som_buraco.play()
                     if all(j.no_buraco for j in jogadores):
                         estado = "FIM_HOLE"
                     else:
                         jogador_idx = proximo_jogador(jogadores, jogador_idx)
                         aiming = False
 
-        # ── DESENHO (para surf 1000×700) ──────────────────────────────────
         if estado == "MENU":
             box, b_add, b_rem, b_ini, b_how, b_rank = desenhar_menu(
                 surf, fonte_g, fonte_m, fonte_s,
@@ -451,7 +429,6 @@ def main():
             esc = fonte_s.render("ESC — voltar ao menu", True, (150, 150, 150))
             surf.blit(esc, (LARGURA // 2 - esc.get_width() // 2, ALTURA - 45))
 
-        # ── Escala surf → tela real ────────────────────────────────────────
         tela.fill((0, 0, 0))
         scaled = pygame.transform.scale(surf, (w_sc, h_sc))
         tela.blit(scaled, (off_x, off_y))
@@ -459,7 +436,6 @@ def main():
 
     pygame.quit()
     sys.exit()
-
 
 if __name__ == "__main__":
     main()
