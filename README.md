@@ -2,7 +2,7 @@
 Pygame desenvolvido por Gabriel Rodrigues, Henrique Martins e Juliana Pires
 Baseado em um jogos como 'Golf with your friends', 'Mini Golf Club' e '8 ball pool', é um jogo com os objetivos do golf, com alguns incrementos, e uma mecânica em relação as tacadas parecida com jogos de sinuca. A meta do jogo é simples, chegar ao buraco com o mínimo de tacadas possíveis, ou caso jogue em grupo, menos tacadas que o seu adversário.
 
-#VÍDEO COM GAMEPLAY (MOSTRA A FUNCIONALIDADE DO JOGO)
+# VÍDEO COM GAMEPLAY (MOSTRA A FUNCIONALIDADE DO JOGO)
 (https://youtu.be/Jy7k3z2laFM)
 
 Para o desenvolvimento do jogo, utilizamos a bilbioteca Python e tutoriais no YouTube para auxiliar nas ações do jogo, como as colisões e outras questões mais físicas, como a esteira que acelera ou diminui a velocidade da bolinha, e a areia que cria um atrito e praticamente para a bolinha quando chega nela. Também utilizamos IAg para alguns processos e correções de bugs que foram surgindo, além de auxílio para a importação dos sons e como posicionar os elementos que aparecem no nosso jogo; Esteiras, água e areia podem variar de tamanho e largura no nosso jogo, além da velocidade que atua etc. utilizamos IA para auxiliar e ficar com algum tipo de realidade, nada muda exarcebado e que também fosse alterado de forma mais fácil, de forma manual pelo grupo.
@@ -10,7 +10,7 @@ Para o desenvolvimento do jogo, utilizamos a bilbioteca Python e tutoriais no Yo
 https://www.youtube.com/watch?v=oppoAp5yuv4 #vídeo que mostra um pouco sobre as colisões
 https://www.youtube.com/watch?v=1lG2uDWGHPA #vídeo de colisões
 
-#O jogo necessita dos seguintes arquivos no mesmo diretório:
+# O jogo necessita dos seguintes arquivos no mesmo diretório:
 inicio.py
 config.py
 paredes.py
@@ -25,25 +25,25 @@ ranking_golf.json (criado automaticamente)
 the-ball-hit-the-hole.wav
 single_knock.wav
 
-#MODO DE EXECUÇÃO
+# MODO DE EXECUÇÃO
 Clone ou baixe o repositório.
 
-#Instale o Pygame:
+# Instale o Pygame:
 pip install pygame
 
-#Execute o jogo utilizando:
+# Execute o jogo utilizando:
 python inicio.py
 
-#CONTROLES
+# CONTROLES
 Mouse esquerdo → clicar, arrastar e soltar para realizar a tacada
 ESC → sair do jogo ou voltar dependendo da tela atual
 SPACE → avançar para a próxima fase após concluir o buraco
 R → reiniciar o jogo na tela final/ranking
 
-#COMO JOGAR
+# COMO JOGAR
 O objetivo do jogo é completar todas as fases utilizando o menor número possível de tacadas. Cada mapa possui obstáculos e mecânicas diferentes, exigindo precisão, estratégia e controle de força nas jogadas.
 
-#As principais mecânicas do jogo incluem:
+# As principais mecânicas do jogo incluem:
 Areia: reduz significativamente a velocidade da bola.
 Água: retorna a bola para a última posição válida e adiciona penalidade de tacada.
 Túneis: funcionam como portais que transportam a bola entre dois pontos do mapa.
@@ -52,7 +52,7 @@ Paredes móveis: obstáculos dinâmicos que exigem timing correto para ultrapass
 
 Ao concluir todas as fases, o jogo exibe um ranking final e salva automaticamente os melhores resultados em um arquivo JSON.
 
-#ESTRUTURA DO PROJETO
+# ESTRUTURA DO PROJETO
 inicio.py → loop principal, menu, controle das fases e gerenciamento do jogo.
 config.py → constantes globais, cores e configurações gerais.
 paredes.py → classes Parede e Jogador.
@@ -65,21 +65,21 @@ paredes_moveis.py → classe ParedeMovel.
 ranking.py → sistema de ranking e salvamento de resultados.
 ranking_golf.json → armazenamento automático do ranking.
 
-#PROBLEMAS E SOLUÇÕES
+# PROBLEMAS E SOLUÇÕES
 Tela preta ou erro de importação
 Verifique se todos os arquivos .py estão no mesmo diretório.
 
-#Erro ao iniciar o jogo
+# Erro ao iniciar o jogo
 Confirme se o Pygame foi instalado corretamente:
 pip install pygame
 
-#Sons não funcionam
+# Sons não funcionam
 Verifique se os arquivos .wav utilizados estão nos caminhos corretos.
 
-#Ranking não salva
+# Ranking não salva
 O arquivo ranking_golf.json é criado automaticamente após finalizar uma partida.
 
-#FUNCIONALIDADES IMPLEMENTADAS
+# FUNCIONALIDADES IMPLEMENTADAS
 múltiplas fases;
 sistema de tacadas com física;
 colisão com paredes;
@@ -94,11 +94,11 @@ menu inicial;
 HUD durante a gameplay;
 efeitos sonoros.
 
-#TECNOLOGIAS UTILIZADAS
+# TECNOLOGIAS UTILIZADAS
 Python
 Pygame
 JSON para armazenamento de ranking e dados persistentes
 
-#CRÉDITOS
+# CRÉDITOS
 Python e Pygame
 Professor Márcio Fernando
