@@ -2,6 +2,8 @@ import pygame
 import sys
 import os
 import math
+
+#imports das outras partes do jogo, para melhor organização
 from paredes_moveis import ParedeMovel
 from config import (
     LARGURA, ALTURA, FPS,
@@ -25,6 +27,7 @@ from buracos_fase import (
 )
 from ranking.ranking import adicionar_ao_ranking, carregar_ranking
 
+#classe das Fases
 class Fase:
     def __init__(self, numero, par, tee, buraco_pos,
                  paredes=None, areias=None, aguas=None,
@@ -127,6 +130,7 @@ def criar_fases():
         ),
     ]
 
+#jogadores
 def proximo_jogador(jogadores, atual):
     n = len(jogadores)
     for i in range(1, n + 1):
@@ -135,6 +139,7 @@ def proximo_jogador(jogadores, atual):
             return idx
     return atual
 
+#menu
 def desenhar_menu(surf, fonte_g, fonte_m, fonte_s,
                   cadastrados, nome_input, ativo_input, mouse_pos):
     surf.fill(COR_FUNDO)
@@ -213,6 +218,7 @@ def desenhar_menu(surf, fonte_g, fonte_m, fonte_s,
 
     return box, b_add, b_rem, b_ini, b_how, b_rank
 
+#ranking na tela
 def desenhar_ranking_tela(surf, fonte_g, fonte_m, fonte_mono):
     data = carregar_ranking()
     surf.fill((15, 35, 20))
@@ -240,6 +246,7 @@ def desenhar_ranking_tela(surf, fonte_g, fonte_m, fonte_mono):
     esc = fonte_m.render("ESC — voltar ao menu", True, (130, 170, 130))
     surf.blit(esc, (LARGURA // 2 - esc.get_width() // 2, ALTURA - 45))
 
+#função principal, onde o jogo vai rodar
 def main():
     pygame.init()
     pygame.mixer.init()
