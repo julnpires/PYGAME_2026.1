@@ -20,8 +20,8 @@ tuneis.py
 paredes_moveis.py
 ranking.py
 ranking_golf.json (criado automaticamente)
-buraco.wav
-tacada.wav
+the-ball-hit-the-hole.wav
+single_knock.wav
 
 MODO DE EXECUÇÃO
 Clone ou baixe o repositório.
