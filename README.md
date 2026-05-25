@@ -3,10 +3,12 @@ Pygame desenvolvido por Gabriel Rodrigues, Henrique Martins e Juliana Pires
 Baseado em um jogos como 'Golf with your friends', 'Mini Golf Club' e '8 ball pool', é um jogo com os objetivos do golf, com alguns incrementos, e uma mecânica em relação as tacadas parecida com jogos de sinuca. A meta do jogo é simples, chegar ao buraco com o mínimo de tacadas possíveis, ou caso jogue em grupo, menos tacadas que o seu adversário.
 
 VÍDEO COM GAMEPLAY (MOSTRA A FUNCIONALIDADE DO JOGO)
+(https://youtu.be/Jy7k3z2laFM)
 
-(adicionar link do vídeo aqui)
+Para o desenvolvimento do jogo, utilizamos a bilbioteca Python e tutoriais no YouTube para auxiliar nas ações do jogo, como as colisões e outras questões mais físicas, como a esteira que acelera ou diminui a velocidade da bolinha, e a areia que cria um atrito e praticamente para a bolinha quando chega nela. Também utilizamos IAg para alguns processos e correções de bugs que foram surgindo, além de auxílio para a importação dos sons e como posicionar os elementos que aparecem no nosso jogo; Esteiras, água e areia podem variar de tamanho e largura no nosso jogo, além da velocidade que atua etc. utilizamos IA para auxiliar e ficar com algum tipo de realidade, nada muda exarcebado e que também fosse alterado de forma mais fácil, de forma manual pelo grupo.
 
-Durante o desenvolvimento, utilizamos principalmente a documentação oficial do Pygame, vídeos no YouTube sobre física, colisão e organização de projetos em Python, além de apoio pontual de IA para dúvidas relacionadas à modularização do código, organização dos arquivos, funcionamento de classes, colisões, estruturas de dados e correção de pequenos bugs encontrados ao longo do projeto.
+https://www.youtube.com/watch?v=oppoAp5yuv4 #vídeo que mostra um pouco sobre as colisões
+https://www.youtube.com/watch?v=1lG2uDWGHPA #vídeo de colisões
 
 O jogo necessita dos seguintes arquivos no mesmo diretório:
 inicio.py
