@@ -148,18 +148,25 @@
       "data": "2026-05-25 10:04"
     },
     {
-      "nome": "pintobas",
-      "total_tacadas": 21,
+      "nome": "gabriel",
+      "total_tacadas": 22,
       "fases": 6,
-      "media": 3.5,
-      "data": "2026-05-25 12:31"
+      "media": 3.67,
+      "data": "2026-05-25 12:12"
     },
     {
-      "nome": "teste-exemplo",
-      "total_tacadas": 26,
+      "nome": "J",
+      "total_tacadas": 23,
       "fases": 6,
-      "media": 4.33,
-      "data": "2026-05-25 18:06"
+      "media": 3.83,
+      "data": "2026-05-25 11:42"
+    },
+    {
+      "nome": "alline",
+      "total_tacadas": 28,
+      "fases": 6,
+      "media": 4.67,
+      "data": "2026-05-25 12:12"
     },
     {
       "nome": "Test",
@@ -167,6 +174,20 @@
       "fases": 1,
       "media": 5.0,
       "data": "2026-05-23 15:49"
+    },
+    {
+      "nome": "gb",
+      "total_tacadas": 30,
+      "fases": 6,
+      "media": 5.0,
+      "data": "2026-05-25 12:27"
+    },
+    {
+      "nome": "j",
+      "total_tacadas": 33,
+      "fases": 6,
+      "media": 5.5,
+      "data": "2026-05-25 11:53"
     }
   ]
 }

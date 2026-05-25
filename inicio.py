@@ -246,6 +246,88 @@ def desenhar_ranking_tela(surf, fonte_g, fonte_m, fonte_mono):
     esc = fonte_m.render("ESC — voltar ao menu", True, (130, 170, 130))
     surf.blit(esc, (LARGURA // 2 - esc.get_width() // 2, ALTURA - 45))
 
+def desenhar_regras(surf, fonte_g, fonte_m, fonte_s):
+    surf.fill(COR_FUNDO)
+    for yl in range(0, ALTURA, 30):
+        if (yl // 30) % 2 == 0:
+            pygame.draw.rect(surf, COR_GRAMA_CLARA, (0, yl, LARGURA, 15))
+
+    titulo = fonte_g.render("COMO JOGAR", True, COR_TEXTO)
+    surf.blit(titulo, (LARGURA // 2 - titulo.get_width() // 2, 22))
+    pygame.draw.line(surf, (80, 120, 85), (60, 84), (LARGURA - 60, 84), 1)
+
+    # ── Controles (coluna esquerda) ───────────────────────────────────────────
+    cx1, cy = 60, 102
+    surf.blit(fonte_m.render("CONTROLES", True, (160, 200, 160)), (cx1, cy))
+    pygame.draw.line(surf, (80, 120, 85), (cx1, cy + 28), (cx1 + 420, cy + 28), 1)
+    controles = [
+        ("Mouse (arrastar)",  "realizar a tacada"),
+        ("SPACE",             "avançar para o próximo buraco"),
+        ("R",                 "voltar ao menu"),
+        ("ESC",               "fechar o jogo"),
+    ]
+    for i, (tecla, acao) in enumerate(controles):
+        ry = cy + 40 + i * 36
+        surf.blit(fonte_s.render(tecla, True, (220, 220, 100)), (cx1, ry))
+        surf.blit(fonte_s.render("→",   True, (100, 150, 100)), (cx1 + 210, ry))
+        surf.blit(fonte_s.render(acao,  True, COR_TEXTO),       (cx1 + 232, ry))
+
+    # ── Mecânicas (coluna direita) ────────────────────────────────────────────
+    cx2 = 540
+    surf.blit(fonte_m.render("MECÂNICAS", True, (160, 200, 160)), (cx2, cy))
+    pygame.draw.line(surf, (80, 120, 85), (cx2, cy + 28), (LARGURA - 60, cy + 28), 1)
+    mecanicas = [
+        ((220, 200, 130), "Areia",        "desacelera a bola"),
+        ((60,  130, 220), "Água",         "penalidade de +1 tacada"),
+        ((170,  90, 230), "Túnel",        "teletransporta a bola"),
+        ((95,  110, 145), "Esteira",      "empurra a bola continuamente"),
+        ((170,  70, 110), "Parede Móvel", "obstáculo dinâmico com timing"),
+    ]
+    for i, (cor, nome, desc) in enumerate(mecanicas):
+        ry = cy + 40 + i * 48
+        pygame.draw.rect(surf, cor, (cx2, ry + 5, 14, 14), border_radius=3)
+        surf.blit(fonte_m.render(nome, True, cor),       (cx2 + 22, ry))
+        surf.blit(fonte_s.render(desc, True, COR_TEXTO), (cx2 + 22, ry + 28))
+
+    # ── Pontuação ─────────────────────────────────────────────────────────────
+    sy = 406
+    pygame.draw.line(surf, (80, 120, 85), (60, sy - 14), (LARGURA - 60, sy - 14), 1)
+    surf.blit(fonte_m.render("PONTUAÇÃO", True, (160, 200, 160)), (60, sy))
+    scores = [
+        ("Albatross",    "-3", (100, 200, 255)),
+        ("Eagle",        "-2", (80,  200, 120)),
+        ("Birdie",       "-1", (120, 220, 120)),
+        ("Par",           "0", (230, 230, 230)),
+        ("Bogey",        "+1", (230, 160,  80)),
+        ("Double Bogey", "+2", (220, 100,  80)),
+    ]
+    box_w, box_h, gap = 138, 52, 14
+    bx = (LARGURA - (len(scores) * box_w + (len(scores) - 1) * gap)) // 2
+    for label, val, cor in scores:
+        box = pygame.Rect(bx, sy + 36, box_w, box_h)
+        pygame.draw.rect(surf, (20, 50, 25), box, border_radius=7)
+        pygame.draw.rect(surf, cor, box, 2, border_radius=7)
+        t_n = fonte_s.render(label, True, cor)
+        t_v = fonte_m.render(val,   True, cor)
+        surf.blit(t_n, (box.centerx - t_n.get_width() // 2, box.y + 6))
+        surf.blit(t_v, (box.centerx - t_v.get_width() // 2, box.y + 26))
+        bx += box_w + gap
+
+    # ── Objetivo ──────────────────────────────────────────────────────────────
+    oy = sy + 36 + box_h + 24
+    pygame.draw.line(surf, (80, 120, 85), (60, oy - 12), (LARGURA - 60, oy - 12), 1)
+    obj = fonte_m.render(
+        "Complete todas as fases com o menor número de tacadas possível.", True, (200, 240, 200)
+    )
+    surf.blit(obj, (LARGURA // 2 - obj.get_width() // 2, oy))
+
+    # ── Rodapé ────────────────────────────────────────────────────────────────
+    r_t   = fonte_s.render("R — voltar ao menu",  True, (130, 170, 130))
+    esc_t = fonte_s.render("ESC — fechar o jogo", True, (130, 170, 130))
+    surf.blit(r_t,   (LARGURA // 2 - r_t.get_width() - 25, ALTURA - 40))
+    surf.blit(esc_t, (LARGURA // 2 + 25, ALTURA - 40))
+
+
 #função principal, onde o jogo vai rodar
 def main():
     pygame.init()
@@ -391,6 +473,10 @@ def main():
                         jogador_idx = 0
                         estado = "JOGANDO"
 
+            elif estado == "REGRAS":
+                if ev.type == pygame.KEYDOWN and ev.key == pygame.K_r:
+                    estado = "MENU"
+
         if estado == "JOGANDO" and jogadores and fase:
             jatual = jogadores[jogador_idx]
             for pm in fase.paredes_moveis:
@@ -430,11 +516,7 @@ def main():
             desenhar_ranking_tela(surf, fonte_g, fonte_m, fonte_mono)
 
         elif estado == "REGRAS":
-            surf.fill((20, 20, 20))
-            txt = fonte_m.render("Tela de regras (placeholder)", True, COR_TEXTO)
-            surf.blit(txt, (LARGURA // 2 - txt.get_width() // 2, 300))
-            esc = fonte_s.render("ESC — voltar ao menu", True, (150, 150, 150))
-            surf.blit(esc, (LARGURA // 2 - esc.get_width() // 2, ALTURA - 45))
+            desenhar_regras(surf, fonte_g, fonte_m, fonte_s)
 
         tela.fill((0, 0, 0))
         scaled = pygame.transform.scale(surf, (w_sc, h_sc))
