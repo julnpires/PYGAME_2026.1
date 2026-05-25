@@ -15,6 +15,90 @@
       "data": "2026-05-23 17:33"
     },
     {
+      "nome": "13tacadas",
+      "total_tacadas": 11,
+      "fases": 6,
+      "media": 1.83,
+      "data": "2026-05-25 12:55"
+    },
+    {
+      "nome": "top12",
+      "total_tacadas": 11,
+      "fases": 6,
+      "media": 1.83,
+      "data": "2026-05-25 13:03"
+    },
+    {
+      "nome": "rod",
+      "total_tacadas": 14,
+      "fases": 6,
+      "media": 2.33,
+      "data": "2026-05-25 12:21"
+    },
+    {
+      "nome": "tops",
+      "total_tacadas": 14,
+      "fases": 6,
+      "media": 2.33,
+      "data": "2026-05-25 12:43"
+    },
+    {
+      "nome": "top9",
+      "total_tacadas": 14,
+      "fases": 6,
+      "media": 2.33,
+      "data": "2026-05-25 13:07"
+    },
+    {
+      "nome": "vamos90",
+      "total_tacadas": 14,
+      "fases": 6,
+      "media": 2.33,
+      "data": "2026-05-25 13:11"
+    },
+    {
+      "nome": "rod",
+      "total_tacadas": 15,
+      "fases": 6,
+      "media": 2.5,
+      "data": "2026-05-25 12:26"
+    },
+    {
+      "nome": "rod",
+      "total_tacadas": 15,
+      "fases": 6,
+      "media": 2.5,
+      "data": "2026-05-25 12:31"
+    },
+    {
+      "nome": "tentativa200",
+      "total_tacadas": 15,
+      "fases": 6,
+      "media": 2.5,
+      "data": "2026-05-25 12:52"
+    },
+    {
+      "nome": "rick",
+      "total_tacadas": 15,
+      "fases": 6,
+      "media": 2.5,
+      "data": "2026-05-25 13:07"
+    },
+    {
+      "nome": "teste",
+      "total_tacadas": 17,
+      "fases": 6,
+      "media": 2.83,
+      "data": "2026-05-25 17:55"
+    },
+    {
+      "nome": "teste1",
+      "total_tacadas": 17,
+      "fases": 6,
+      "media": 2.83,
+      "data": "2026-05-25 17:59"
+    },
+    {
       "nome": "Henrique",
       "total_tacadas": 18,
       "fases": 6,
@@ -29,6 +113,20 @@
       "data": "2026-05-25 09:50"
     },
     {
+      "nome": "lucas",
+      "total_tacadas": 18,
+      "fases": 6,
+      "media": 3.0,
+      "data": "2026-05-25 12:52"
+    },
+    {
+      "nome": "henrique",
+      "total_tacadas": 19,
+      "fases": 6,
+      "media": 3.17,
+      "data": "2026-05-25 12:26"
+    },
+    {
       "nome": "Camila",
       "total_tacadas": 20,
       "fases": 6,
@@ -36,11 +134,32 @@
       "data": "2026-05-24 20:45"
     },
     {
+      "nome": "1",
+      "total_tacadas": 20,
+      "fases": 6,
+      "media": 3.33,
+      "data": "2026-05-25 12:17"
+    },
+    {
       "nome": "g",
       "total_tacadas": 21,
       "fases": 6,
       "media": 3.5,
       "data": "2026-05-25 10:04"
+    },
+    {
+      "nome": "pintobas",
+      "total_tacadas": 21,
+      "fases": 6,
+      "media": 3.5,
+      "data": "2026-05-25 12:31"
+    },
+    {
+      "nome": "teste-exemplo",
+      "total_tacadas": 26,
+      "fases": 6,
+      "media": 4.33,
+      "data": "2026-05-25 18:06"
     },
     {
       "nome": "Test",
