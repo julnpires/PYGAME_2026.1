@@ -64,9 +64,9 @@ def criar_fases():
             ],
             areias=[Areia(380, 500, 220, 110)],
             aguas=[Agua(600, 480, 130, 120)],
-            tuneis=[Tunel((250, 620), (310, 330), COR_TUNEL_1)],
-            esteiras=[Esteira(775, 310, 50, 250, 0, -1, 0.52)],
-            paredes_moveis=[ParedeMovel(755, 295, 175, 25, 755, 440, velocidade=1.0)],
+            tuneis=[Tunel((190, 560), (780, 500), COR_TUNEL_1)],
+            esteiras=[Esteira(800, 340, 50, 250, 0, -1, 0.35)],
+            paredes_moveis=[ParedeMovel(775, 300, 175, 25, 745, 455, velocidade=1.3)],
         ),
 
         Fase(
@@ -77,8 +77,8 @@ def criar_fases():
                 Parede(450, 80, 30, 130), Parede(450, 490, 30, 140),
             ],
             aguas=[Agua(380, 230, 240, 240)],
-            tuneis=[Tunel((280, 350), (720, 350), COR_TUNEL_2)],
-            paredes_moveis=[ParedeMovel(370, 110, 30, 100, 370, 480, velocidade=1.2)],
+            tuneis=[Tunel((260, 220), (760, 470), COR_TUNEL_2)],
+            paredes_moveis=[ParedeMovel(800, 110, 30, 100, 800, 480, velocidade=1.2)],
         ),
 
         Fase(
@@ -90,10 +90,10 @@ def criar_fases():
                 Parede(620, 380, 30, 260), Parede(380, 380, 270, 30),
                 Parede(750, 200, 30, 200),
             ],
-            areias=[Areia(700, 60, 80, 130)],
-            aguas=[Agua(110, 540, 110, 110)],
-            tuneis=[Tunel((340, 200), (820, 480), COR_TUNEL_3)],
-            esteiras=[Esteira(280, 340, 90, 40, 1, 0, 0.25)],
+            areias=[Areia(520, 220, 80, 130)],
+            aguas=[Agua(300, 430, 110, 110)],
+            tuneis=[Tunel((300, 170), (800, 500), COR_TUNEL_3)],
+            esteiras=[Esteira(280, 340, 90, 40, 1, 0, 0.18)],
         ),
 
         Fase(
@@ -104,10 +104,10 @@ def criar_fases():
                 Parede(485, 30, 30, 640), Parede(515, 380, 470, 30),
             ],
             tuneis=[
-                Tunel((250, 200), (700, 180), COR_TUNEL_1),
-                Tunel((900, 250), (700, 540), COR_TUNEL_2),
+                Tunel((170, 250), (590, 240), COR_TUNEL_1),
+                Tunel((820, 320), (640, 560), COR_TUNEL_2),
             ],
-            esteiras=[Esteira(560, 200, 280, 50, -1, 0, 0.25)],
+            esteiras=[Esteira(500, 210, 360, 60, -1, 0, 0.48)],
         ),
 
         Fase(
@@ -116,14 +116,16 @@ def criar_fases():
                 Parede(0, 0, 1000, 30), Parede(0, 670, 1000, 30),
                 Parede(0, 0, 30, 700), Parede(970, 0, 30, 700),
                 Parede(60, 230, 700, 30), Parede(60, 440, 700, 30),
+                Parede(60, 150, 560, 30),
+                Parede(700, 150, 90, 30),
             ],
             esteiras=[
-                Esteira(150, 90, 600, 130, 1, 0, 0.28),
-                Esteira(150, 480, 600, 130, -1, 0, 0.22),
+                Esteira(150, 90, 420, 90, 1, 0, 0.18),
+                Esteira(180, 480, 420, 130, -1, 0, 0.28),
             ],
             paredes_moveis=[
-                ParedeMovel(250, 290, 30, 130, 450, 290, velocidade=1.4, fase_inicial=0.0),
-                ParedeMovel(550, 290, 30, 130, 700, 290, velocidade=1.6, fase_inicial=1.5),
+                ParedeMovel(250, 290, 30, 130, 450, 290, velocidade=1.8, fase_inicial=0.0),
+                ParedeMovel(550, 290, 30, 130, 700, 290, velocidade=2.0, fase_inicial=1.5),
             ],
         ),
     ]

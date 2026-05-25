@@ -8,6 +8,41 @@
       "data": "2026-05-23 15:50"
     },
     {
+      "nome": "henrique",
+      "total_tacadas": 10,
+      "fases": 6,
+      "media": 1.67,
+      "data": "2026-05-23 17:33"
+    },
+    {
+      "nome": "Henrique",
+      "total_tacadas": 18,
+      "fases": 6,
+      "media": 3.0,
+      "data": "2026-05-24 20:45"
+    },
+    {
+      "nome": "h",
+      "total_tacadas": 18,
+      "fases": 6,
+      "media": 3.0,
+      "data": "2026-05-25 09:50"
+    },
+    {
+      "nome": "Camila",
+      "total_tacadas": 20,
+      "fases": 6,
+      "media": 3.33,
+      "data": "2026-05-24 20:45"
+    },
+    {
+      "nome": "g",
+      "total_tacadas": 21,
+      "fases": 6,
+      "media": 3.5,
+      "data": "2026-05-25 10:04"
+    },
+    {
       "nome": "Test",
       "total_tacadas": 5,
       "fases": 1,
